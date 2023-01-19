@@ -5,12 +5,14 @@ const oscillators = [];
 const frequencyInputs = [];
 const volumeSliders = [];
 
+const pianoKeys = document.querySelectorAll('.key');
+
 // create a function to add an oscillator
 function addOscillator() {
     // create an oscillator node
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
-    //oscillator.connect(audioCtx.destination);
+    gainNode.gain.value = 0.2;
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
@@ -43,7 +45,7 @@ function addOscillator() {
         oscillator.frequency.value = event.target.value;
     });
 
-    volumeSlider.addEventListener("input", (event) => {
+    volumeSlider.addEventListener("change", (event) => {
         gainNode.gain.value = event.target.value;
     });
 
@@ -54,28 +56,18 @@ function addOscillator() {
 
 // listen for the play button to be clicked
 function play() {
-    // start all oscillators in the array
     audioCtx.resume();
-   // for (const oscillator of oscillators) {
-  //      console.log(oscillator.state === "running");
-   //     oscillator.start();
-   //     console.log(oscillator.state === "running");
-   // }
-   // console.log(oscillators);
-   // console.log(audioCtx);
 }
 
 // listen for the pause button to be clicked
 function pause() {
-    // stop all oscillators in the array
     audioCtx.suspend();
-
-    //for (const oscillator of oscillators) {
-    //    console.log(oscillator.state === "running");
-    //    oscillator.stop();
-    //    console.log(oscillator.state === "running");
-    //}
-    //console.log(oscillators);
-    //console.log(audioCtx);
 }
 
+pianoKeys.forEach(pianoKey => {
+    pianoKey.addEventListener("click", keypress);
+});
+
+function keypress(){
+    console.log("clicked!");
+}
