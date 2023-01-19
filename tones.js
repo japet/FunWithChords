@@ -27,7 +27,7 @@ function addOscillator() {
     volumeSlider.step = "0.02";
     volumeSlider.min = 0;
     volumeSlider.max = 1;
-    volumeSlider.value = 0.5;
+    volumeSlider.value = 0.2;
 
     // add the frequency input element to the array
     frequencyInputs.push(frequencyInput);
