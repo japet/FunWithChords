@@ -72,13 +72,13 @@ pianoKeys.forEach(pianoKey => {
 function keypress(){
     if(!this.classList.contains("selected")){
         this.classList.add("selected");
-        addOscillator(Tonal.Note.freq(this.getAttribute("data-note")));
+        addOscillator(Tonal.Note.freq(this.getAttribute("note")));
     }else{
         this.classList.remove("selected");
         console.log(oscillators);
     }
     checkChord();
-    console.log(Tonal.Note.freq(this.getAttribute("data-note")));
+    console.log(Tonal.Note.freq(this.getAttribute("note")));
 }
 
 function checkChord(){
@@ -87,7 +87,7 @@ function checkChord(){
     
     //extract notes from the key divs
     divs.forEach((div)=> {
-        array.push(div.getAttribute("data-note"));
+        array.push(div.getAttribute("note"));
     });
 
     console.log(Tonal.Chord.detect(array));
