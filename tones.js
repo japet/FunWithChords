@@ -81,6 +81,14 @@ function keypress(){
 }
 
 function checkChord(){
-    let result = document.querySelectorAll('.selected').map(({}))
-    console.log(result);
+    let divs = document.querySelectorAll('.selected');
+    let array = [];
+    
+    //extract notes from the key divs
+    divs.forEach((div)=> {
+        array.push(div.getAttribute("data-note"));
+    });
+
+    console.log(Tonal.Chord.detect(array));
+    document.getElementById("chordDisplay").innerHTML = Tonal.Chord.detect(array);
 }
