@@ -75,6 +75,7 @@ function keypress(){
         addOscillator(Tonal.Note.freq(this.getAttribute("data-note")));
     }else{
         this.classList.remove("selected");
+        console.log(oscillators);
     }
     checkChord();
     console.log(Tonal.Note.freq(this.getAttribute("data-note")));
