@@ -8,9 +8,10 @@ const volumeSliders = [];
 const pianoKeys = document.querySelectorAll('.key');
 
 // create a function to add an oscillator
-function addOscillator() {
+function addOscillator(freq) {
     // create an oscillator node
     const oscillator = audioCtx.createOscillator();
+    oscillator.frequency.value = freq;
     const gainNode = audioCtx.createGain();
     gainNode.gain.value = 0.2;
     oscillator.connect(gainNode);
@@ -21,7 +22,7 @@ function addOscillator() {
     frequencyInput.type = "number";
     frequencyInput.min = 20;
     frequencyInput.max = 20000;
-    frequencyInput.value = 440;
+    frequencyInput.value = freq;
 
     //create a gain element for 
     const volumeSlider = document.createElement("input");
@@ -69,12 +70,17 @@ pianoKeys.forEach(pianoKey => {
 });
 
 function keypress(){
-    console.log(this);
-    console.log("clicked!");
     if(!this.classList.contains("selected")){
         this.classList.add("selected");
+        addOscillator(Tonal.Note.freq(this.getAttribute("data-note")));
     }else{
         this.classList.remove("selected");
     }
-    
+    checkChord();
+    console.log(Tonal.Note.freq(this.getAttribute("data-note")));
+}
+
+function checkChord(){
+    let result = document.querySelectorAll('.selected').map(({}))
+    console.log(result);
 }
