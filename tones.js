@@ -73,9 +73,8 @@ function keypress(){
     console.log("clicked!");
     if(!this.classList.contains("selected")){
         this.classList.add("selected");
-        this.classList.remove("unselected");
     }else{
         this.classList.remove("selected");
-        this.classList.add("unselected");
     }
+    
 }
