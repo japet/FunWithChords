@@ -91,4 +91,5 @@ function checkChord(){
 
     console.log(Tonal.Chord.detect(array));
     document.getElementById("chordDisplay").innerHTML = Tonal.Chord.detect(array);
+    document.getElementById("noteDisplay").innerHTML = array;
 }
