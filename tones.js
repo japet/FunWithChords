@@ -69,5 +69,13 @@ pianoKeys.forEach(pianoKey => {
 });
 
 function keypress(){
+    console.log(this);
     console.log("clicked!");
+    if(!this.classList.contains("selected")){
+        this.classList.add("selected");
+        this.classList.remove("unselected");
+    }else{
+        this.classList.remove("selected");
+        this.classList.add("unselected");
+    }
 }

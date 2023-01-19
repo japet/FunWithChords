@@ -38,6 +38,7 @@
     width: 38px;
     height: 160px;
     border-radius: 0 0 5px 5px;
+    border: solid #000 2px;
     box-sizing: border-box;
     position: absolute;
     background-color: #000;
