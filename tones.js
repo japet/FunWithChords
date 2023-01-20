@@ -9,13 +9,14 @@ const volumeSliders = [];
 const pianoKeys = document.querySelectorAll('.key');
 
 // create a function to add an oscillator
-function addOscillator(note) {
+function selectNote(note) {
     //create an oscillator
     const oscillator = audioCtx.createOscillator();
     const noteName = note.getAttribute("note")
+    const freq = Tonal.Note.freq(noteName);
 
     //pull freq from Tonal, set oscillator to that value
-    oscillator.frequency.value = Tonal.Note.freq(note.getAttribute("note"));
+    oscillator.frequency.value = freq;//Tonal.Note.freq(note.getAttribute("note"));
     
     //create a gain control (volume), and set it to 10%
     const gainNode = audioCtx.createGain();
@@ -26,14 +27,25 @@ function addOscillator(note) {
     // add the oscillator to an object that can be referenced note name
     oscillators[note.getAttribute("note")] = oscillator;
     oscillator.start();
+
+    //create note info block/card
+    let newDiv = document.createElement("div");
+    newDiv.classList.add("noteCard");
+    newDiv.setAttribute("noteName", noteName);
+    newDiv.innerHTML = "Note: "+noteName+"<br> Freq:"+freq.toFixed(2);
+    //add it in an existing div
+    let parentDiv = document.querySelector("#noteBox");
+    parentDiv.appendChild(newDiv);
 }
 
-function removeOscillator(note) {
+function unselectNote(note) {
     const noteName = note.getAttribute("note");
     const oscillator = oscillators[noteName];
     oscillator.stop();
     oscillator.disconnect();
     delete oscillators[noteName];
+    let noteBlock = document.querySelector("[noteName="+noteName+"]");
+    noteBlock.remove();
 }
 
 // listen for the play button to be clicked
@@ -55,10 +67,10 @@ pianoKeys.forEach(pianoKey => {
 function keypress(){
     if(!this.classList.contains("selected")){
         this.classList.add("selected");
-        addOscillator(this);
+        selectNote(this);
     }else{
         this.classList.remove("selected");
-        removeOscillator(this);
+        unselectNote(this);
     }
     checkChord(); //check if the set of currently selected notes are a chord
 }
@@ -69,10 +81,11 @@ function checkChord(){
     
     //extract notes from the key divs
     divs.forEach((div)=> {
-        array.push(div.getAttribute("note"));
+        const noteName = div.getAttribute("note")
+        array.push(noteName);
     });
 
     const chord = Tonal.Chord.detect(array);
     document.getElementById("chordDisplay").innerHTML = chord;
-    document.getElementById("noteDisplay").innerHTML = array;
+    //document.getElementById("noteDisplay").innerHTML = array;
 }
