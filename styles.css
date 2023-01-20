@@ -1,5 +1,5 @@
   .piano {
-    padding: 50px 20px 0 20px;
+    padding: 40px 20px 0 20px;
     background-color: #7a7a7a;
     border-radius: 10px;
     position: fixed;
@@ -24,7 +24,10 @@
     width: 24px;
     height: 96px;
     background-color: black;
-    border: 1px solid #333;
+    border-left: 2px solid #333;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    border-top: 1px solid #333;
     margin-left: -12px;
     margin-right: -12px;
     z-index: 2;
@@ -32,5 +35,5 @@
   }
  
   .selected{
-      background-color: red;
+      background-color: #4a87fa;
   }
