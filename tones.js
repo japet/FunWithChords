@@ -59,7 +59,6 @@ function keypress(){
     }else{
         this.classList.remove("selected");
         removeOscillator(this);
-        console.log(oscillators);
     }
     checkChord(); //check if the set of currently selected notes are a chord
 }
@@ -73,7 +72,6 @@ function checkChord(){
         array.push(div.getAttribute("note"));
     });
 
-    //console.log(Tonal.Chord.detect(array));
     const chord = Tonal.Chord.detect(array);
     document.getElementById("chordDisplay").innerHTML = chord;
     document.getElementById("noteDisplay").innerHTML = array;
