@@ -7,19 +7,24 @@
 <html>
 	<head>
     <link rel="stylesheet" href="styles.css">
-		<title>Fun with Chords</title>
+		<title>webPiano examples</title>
   	</head>
 
     <h1>
-      Fun with Chords
+      Fun with Web Piano
     </h1>
-    
+    <p>
+      The web piano is a custom HTML element 'web-piano' that supports reading inputs from mouse, keyboard, or midi controller (like a keyboard) and firing events for key strikes and key releases that developers can use to build fun things on top of piano inputs. 
+    </p>
     <p>base component:</p>
-    <web-piano id="piano2"></web-piano>
+    <web-piano id="piano0"></web-piano>
     <br>
     <button onclick="play()">resume</button>
     <button onclick="pause()">mute</button>
-    <p>with playing & chord detection</p>
+    <p>
+      example using this component with WebAudio to play tones and detect chords <br>
+      example: press 'a','d', 'g' on your keyboard when the second keyboard is in focus (indicator is green)
+    </p>
     <web-piano id="piano1"></web-piano>
 
     <div id="noteBox"></div>
