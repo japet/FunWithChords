@@ -78,9 +78,9 @@ piano1.addEventListener('key-release', (event) => {
     const note = event.detail;
     console.log("release: "+event.detail);
     stopOscillator(note);
-    checkChord(document.querySelector('#piano1'));
     let noteBlock = document.querySelector("[noteName="+note+"]");
     noteBlock.remove();
+    checkChord(document.querySelector('#piano1'));
 });
 
 function stopOscillator(note){
@@ -95,7 +95,8 @@ function pause() {
 }
 
 function checkChord(piano){
-    array = piano.activeNotes;
-    const chord = Tonal.Chord.detect(array);
-    document.getElementById("chordDisplay").innerHTML = chord;
+    const array1 = piano.activeNotes;
+    const chordSymbol = Tonal.Chord.detect(array1);
+    //console.log("check chord"+chord);
+    document.getElementById("chordDisplay").innerHTML = chordSymbol;
 }

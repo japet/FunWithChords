@@ -1,3 +1,4 @@
+//hard coded mapping for midi values to specific notes on the piano
 const MIDI_NOTE_MAP = {
     0: "C0",
     1: "Db0",
@@ -98,6 +99,7 @@ const MIDI_NOTE_MAP = {
     96: "C8",
 }
 
+//hardcoded mapping for keys to specific notes on the piano
 const KEYBOARD_NOTE_MAP = {
     a: "C4",
     w: "Db4",
@@ -118,6 +120,7 @@ const KEYBOARD_NOTE_MAP = {
     ';': "E5",    
 }
 
+//shadow DOM template for the piano itself
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
@@ -283,23 +286,17 @@ template.innerHTML = `
     </div>
 `;
 
+//webPiano component behavior and logic
 class webPiano extends HTMLElement {
     constructor (){
         super();
         const shadow = this.attachShadow({mode: "open"});
-        this._activeNotes = [];
+        this.activeNotes = [];
         this.tabIndex = 0;
         shadow.append(template.content.cloneNode(true));
         this.addEventListener('keydown', this._handleKeyDown);
         this.addEventListener('keyup', this._handleKeyUp);
         this.addEventListener('blur', this._handleBlur);
-        this.activeNotes = new Proxy(this._activeNotes, {
-            set: (target, key, value) => {
-              target[key] = value;
-              this.dispatchEvent(new CustomEvent('active-notes-changed', { detail: target }));
-              return true;
-            }
-          });
     }
 
     _handleBlur(event){
@@ -311,7 +308,7 @@ class webPiano extends HTMLElement {
 
     _handleKeyDown(event){
         var noteName = KEYBOARD_NOTE_MAP[event.key];
-        if (this._activeNotes.indexOf(noteName) == -1){
+        if (this.activeNotes.indexOf(noteName) == -1){
             const pianoNoteDiv = this.shadowRoot.querySelector('div[note='+noteName+']');
             if (pianoNoteDiv){
                 this.strikeNote(pianoNoteDiv);            
@@ -335,7 +332,7 @@ class webPiano extends HTMLElement {
                 input.onmidimessage = this.handleMIDIMessage;
             });
         }, error => {
-            console.log('fialed to initalize midi: ${error}');
+            console.log('failed to initalize midi: ${error}');
         });
         this.shadowRoot.querySelectorAll('.key').forEach(key => {
             key.addEventListener('mousedown', () => this.mouseDown(key));
@@ -365,23 +362,13 @@ class webPiano extends HTMLElement {
         this.releaseNote(key);
     }
 
-    handleTransition(key){
-        const selected = this.shadowRoot.querySelectorAll('.selected');
-        this._activeNotes = [];
-
-        selected.forEach((div) => {
-            const noteName = div.getAttribute("note");
-            this._activeNotes.push(noteName);
-        })
-    }
-
     strikeNote(noteDiv){
         if(!noteDiv.classList.contains('selected')){
             const noteName = noteDiv.getAttribute("note");
             noteDiv.classList.add('selected');
-            this._activeNotes.push(noteName);
+            this.activeNotes.push(noteName);
             this.dispatchEvent(new CustomEvent('key-strike', { detail: noteName }));
-            this.shadowRoot.querySelector('.playingDisplay').innerHTML = this._activeNotes;
+            this.shadowRoot.querySelector('.playingDisplay').innerHTML = this.activeNotes;
         }
     }
 
@@ -389,122 +376,14 @@ class webPiano extends HTMLElement {
         if(noteDiv.classList.contains('selected')){
             noteDiv.classList.remove('selected');
             const noteName = noteDiv.getAttribute("note");
-            var index = this._activeNotes.indexOf(noteName);
+            var index = this.activeNotes.indexOf(noteName);
+            this.activeNotes.splice(index,1);
             this.dispatchEvent(new CustomEvent('key-release', { detail: noteName }));
-            this._activeNotes.splice(index,1);
-            this.shadowRoot.querySelector('.playingDisplay').innerHTML = this._activeNotes;
+            this.shadowRoot.querySelector('.playingDisplay').innerHTML = this.activeNotes;
         }
     }
 
 }
 
-
-//const pianoKeys = document.querySelectorAll('.key');
-
-// Request MIDI access
-    //navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-
-//const audioCtx = new AudioContext();
-//const oscillators = {};
-//const gains = [];
-
-// create an array to store the frequency input elements
-//const frequencyInputs = [];
-//const volumeSliders = [];
-
-//const pianoKeys = document.querySelectorAll('.key');
-//const linearRampPlus = document.querySelector(".linear-ramp-plus");
-//const linearRampMinus = document.querySelector(".linear-ramp-minus");
-/*
-function onMIDISuccess(midiAccess) {
-  // Get the first available input device
-  var input = midiAccess.inputs.values().next().value;
-
-  // Listen for MIDI messages from the input device
-  input.onmidimessage = handleMIDIMessage;
-}
-
-function onMIDIFailure() {
-  console.log('Failed to access MIDI devices.');
-}
-
-function handleMIDIMessage(event) {
-  // Get the MIDI data from the message
-  var data = event.data;
-
-  // Display the MIDI data on the page
-  var midiDataDiv = document.getElementById('midi-data');
-  const noteName = Tonal.Midi.midiToNoteName(data[1]);
-  const strength = data[2];
-  //const pianoNoteDiv = document.querySelector('div[note='+noteName+']');
-  //console.log(pianoNoteDiv);
-  midiDataDiv.innerHTML = 'MIDI Data: ' + data + ' ' + noteName;
-  console.log(data);
-
-  if (strength > 0){
-    console.log("strike!");
-    strikeNote(noteName);
-  }else{
-    console.log("release!");
-    releaseNote(noteName);
-  }
-}
-
-//handle
-function mouseClick(){
-    console.log(this);
-    if(!this.classList.contains("selected")){
-        //this.classList.add("selected");
-        //strikeNote(this);
-    }else{
-        //this.classList.remove("selected");
-        //Note(this);
-    }
-    checkChord(); //check if the set of currently selected notes are a chord
-}
-
-  // create a function to add an oscillator
-function strikeNote(noteName) {
-  //create an oscillator
-  const pianoNoteDiv = document.querySelector('div[note='+noteName+']');
-  pianoNoteDiv.classList.add("selected");
-  const oscillator = audioCtx.createOscillator();
-  const freq = Tonal.Note.freq(noteName);
-  const currentTime = audioCtx.currentTime;
-
-  //pull freq from Tonal, set oscillator to that value
-  oscillator.frequency.value = freq;
-
-  //create a gain control (volume), and set it to 10%
-  const gainNode = audioCtx.createGain();
-  gainNode.gain.value = 0.001; 
-  gainNode.gain.exponentialRampToValueAtTime(0.1, currentTime+0.01);
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-
-  // add the oscillator to an object that can be referenced note name
-  oscillators[noteName] = oscillator;
-  gains[noteName] = gainNode;
-  oscillator.start();
-  oscillator.connect(analyser);
-  console.log(oscillators);
-}
-
-function releaseNote(noteName) {
-    const pianoNoteDiv = document.querySelector('div[note='+noteName+']');
-    const oscillator = oscillators[noteName];
-    const gainNode = gains[noteName];
-    const currentTime = audioCtx.currentTime;
-    //const stopTime = audioCtx.currentTime + 0.1;
-    console.log(gains);
-    //gainNode.gain.value = .001;
-    gainNode.gain.linearRampToValueAtTime(0,0.01);
-    //gainNode.gain.exponentialRampToValueAtTime(0.0001, currentTime + 0.01);
-    oscillator.stop();
-    oscillator.disconnect();
-    //delete oscillators[noteName];
-    //delete gains[noteName];
-    pianoNoteDiv.classList.remove("selected");
-}
-*/
+//defining the custom Element so it can be used in the DOM
 customElements.define("web-piano", webPiano);
