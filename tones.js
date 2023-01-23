@@ -43,14 +43,14 @@ function play() {
     audioCtx.resume();
 }
 
-const piano1 = document.querySelector('web-piano');
+const piano1 = document.querySelector('#piano1');
 
 piano1.addEventListener('key-strike', (event) => {
     const note = event.detail;
     const freq = Tonal.Note.freq(note);
     console.log("strike: "+event.detail);
     playOscillator(note);
-    checkChord(document.querySelector('web-piano'));
+    checkChord(document.querySelector('#piano1'));
     //create note info block/card
     let newDiv = document.createElement("div");
     newDiv.classList.add("noteCard");
@@ -78,7 +78,7 @@ piano1.addEventListener('key-release', (event) => {
     const note = event.detail;
     console.log("release: "+event.detail);
     stopOscillator(note);
-    checkChord(document.querySelector('web-piano'));
+    checkChord(document.querySelector('#piano1'));
     let noteBlock = document.querySelector("[noteName="+note+"]");
     noteBlock.remove();
 });
